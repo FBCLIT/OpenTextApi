@@ -1,6 +1,6 @@
 <?php
 
-namespace Fbcl\OpenText;
+namespace Fbcl\OpenTextApi;
 
 use Exception;
 use GuzzleHttp\ClientInterface;
@@ -61,7 +61,7 @@ class Client
             $config['auth'] = [$username, $password, 'ntlm'];
         }
 
-        $client = new HttpClient($config);
+        $client = $this->getNewHttpClient($config);
 
         // Send the API authentication attempt.
         $response = $client->post('auth', [
@@ -88,6 +88,38 @@ class Client
     }
 
     /**
+     * Get the API url.
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * Get the base URL of the content server API.
+     *
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        $url = rtrim($this->url, '/');
+
+        return "{$url}/api/{$this->version}/";
+    }
+
+    /**
+     * Get the API version.
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
      * Get a new API client.
      *
      * @param ClientInterface $client The Guzzle HTTP client.
@@ -98,6 +130,18 @@ class Client
     protected function getNewApiClient(ClientInterface $client, $ticket)
     {
         return new Api($client, $ticket);
+    }
+
+    /**
+     * Get a new Guzzle HTTP client.
+     *
+     * @param array $config
+     *
+     * @return HttpClient
+     */
+    protected function getNewHttpClient($config = [])
+    {
+        return new HttpClient($config);
     }
 
     /**
@@ -118,17 +162,5 @@ class Client
         }
 
         throw new Exception("Unable to retrieve OTCS API ticket.");
-    }
-
-    /**
-     * Get the base URL of the content server API.
-     *
-     * @return string
-     */
-    protected function getBaseUrl()
-    {
-        $url = rtrim($this->url, '/');
-
-        return "{$url}/api/{$this->version}/";
     }
 }

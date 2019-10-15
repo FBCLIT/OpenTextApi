@@ -1,6 +1,6 @@
 <?php
 
-namespace Fbcl\OpenText;
+namespace Fbcl\OpenTextApi;
 
 use GuzzleHttp\ClientInterface;
 

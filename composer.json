@@ -35,7 +35,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Fbcl\\Tests\\": "tests/"
+      "Fbcl\\OpenTextApi\\Tests\\": "tests/"
     }
   }
 }
