@@ -30,6 +30,7 @@ class ClientTest extends TestCase
         $api = $client->connect('username', 'secret');
 
         $this->assertInstanceOf(Api::class, $api);
+        $this->assertEquals('secret-ticket', $api->getToken());
     }
 }
 
