@@ -27,13 +27,6 @@ class Api
     protected $token;
 
     /**
-     * The OpenText API token expiry timeout in minutes.
-     *
-     * @var int
-     */
-    protected $timeout = 20;
-
-    /**
      * Constructor.
      *
      * @param ClientInterface $client
@@ -43,6 +36,16 @@ class Api
     {
         $this->client = $client;
         $this->token = $token;
+    }
+
+    /**
+     * Get the API token (ticket).
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 
     /**
@@ -93,7 +96,7 @@ class Api
      */
     public function createNodeDocument($parentId, $name, $path)
     {
-        $fileParts = explode('/', $path);
+        $fileParts = explode(DIRECTORY_SEPARATOR, $path);
 
         return $this->createNode($parentId, static::TYPE_DOCUMENT, $name, [
             'file' => file_get_contents($path),
