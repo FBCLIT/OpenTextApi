@@ -22,7 +22,7 @@ require_once('vendor/autoload.php');
 
 use Fbcl\OpenTextApi\Client;
 
-$client = new Client('https://server.com', 'v1');
+$client = new Client('https://server.com/otcs/cs.exe', 'v1');
 
 try {
     $api = $client->connect('username', 'secret', $ntlm = true);
