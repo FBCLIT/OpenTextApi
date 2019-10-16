@@ -7,9 +7,13 @@ A PHP OpenText API client.
 - PHP >= 7.1
 - ext-json
 
-You must also enable the REST API in your administrator configuration:
+You must also enable the REST API in your administrator configuration.
 
-https://server.com/otcs/cs.exe?func=enterprisearchivesp.restapiconfig
+This is usually located at:
+
+```
+https://myserver.com/otcs/cs.exe?func=enterprisearchivesp.restapiconfig
+```
 
 > Enable the REST API (default): [x]
 
