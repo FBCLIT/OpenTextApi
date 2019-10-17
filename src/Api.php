@@ -90,7 +90,7 @@ class Api
      *
      * @param string|int $parentId The parent node ID that the created node will reside in.
      * @param string     $name     The name of the document.
-     * @param string     $path     The path of the file to upload.
+     * @param string     $path     The path of the file to upload. This must be a directory on the server.
      *
      * @return array
      */
@@ -99,9 +99,8 @@ class Api
         $fileParts = explode(DIRECTORY_SEPARATOR, $path);
 
         return $this->createNode($parentId, static::TYPE_DOCUMENT, $name, [
-            'file' => file_get_contents($path),
+            'file' => $path,
             'file_filename' => end($fileParts),
-            'file_content_type' => mime_content_type($path),
         ]);
     }
 
