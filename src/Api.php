@@ -3,6 +3,7 @@
 namespace Fbcl\OpenTextApi;
 
 use GuzzleHttp\ClientInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class Api
 {
@@ -49,7 +50,7 @@ class Api
     }
 
     /**
-     * Retrieves a nodes meta information.
+     * Get the nodes meta information.
      *
      * @param string $id
      *
@@ -61,7 +62,31 @@ class Api
     }
 
     /**
-     * Retrieves information on the specified nodes children.
+     * Get the nodes versions.
+     *
+     * @param string $id
+     *
+     * @return array
+     */
+    public function getNodeVersions($id)
+    {
+        return $this->get("nodes/{$id}/versions");
+    }
+
+    /**
+     * Get the nodes content.
+     *
+     * @param string $id
+     *
+     * @return array
+     */
+    public function getNodeContent($id)
+    {
+        return $this->get("nodes/{$id}/content");
+    }
+
+    /**
+     * Get the nodes children.
      *
      * @param string $id
      *
@@ -73,7 +98,31 @@ class Api
     }
 
     /**
-     * Creates a new folder in the specified node.
+     * Get the meta information for sub type.
+     *
+     * @param string $subType
+     *
+     * @return array
+     */
+    public function getVolume($subType)
+    {
+        return $this->get("volumes/{$subType}");
+    }
+
+    /**
+     * Get the children for the sub type.
+     *
+     * @param string $subType
+     *
+     * @return array
+     */
+    public function getVolumeChildren($subType)
+    {
+        return $this->get("volumes/{$subType}/nodes");
+    }
+
+    /**
+     * Create a new folder in the specified node.
      *
      * @param string|int $parentId The parent node ID that the created node will reside in.
      * @param string     $name     The name of the folder.
@@ -86,7 +135,7 @@ class Api
     }
 
     /**
-     * Creates a new document in the specified node.
+     * Create a new document in the node.
      *
      * @param string|int $parentId The parent node ID that the created node will reside in.
      * @param string     $name     The name of the document.
@@ -105,7 +154,7 @@ class Api
     }
 
     /**
-     * Creates a new node.
+     * Create a new node.
      *
      * @param string|int $parentId   The parent node ID that the created node will reside in.
      * @param int        $type       The type of node.
@@ -118,45 +167,45 @@ class Api
     {
         return $this->post('nodes', [
             'form_params' => [
-                'type' => $type,
-                'parent_id' => $parentId,
-                'name' => $name,
-            ] + $additional,
+                    'type' => $type,
+                    'parent_id' => $parentId,
+                    'name' => $name,
+                ] + $additional,
         ]);
     }
 
     /**
-     * Executes a GET request to the OpenText API.
+     * Send a GET request to the OpenText API.
      *
      * @param string $url
      * @param array  $options
      *
-     * @return array
+     * @return mixed
      */
     protected function get($url, array $options = [])
     {
         return $this->decodeResponse(
-            $this->client->get($url, $this->defaultOptions($options))->getBody()->getContents()
+            $this->client->get($url, $this->defaultOptions($options))
         );
     }
 
     /**
-     * Executes a POST request to the OpenText API.
+     * Send a POST request to the OpenText API.
      *
      * @param string $url
      * @param array  $options
      *
-     * @return array
+     * @return mixed
      */
     protected function post($url, array $options = [])
     {
         return $this->decodeResponse(
-            $this->client->post($url, $this->defaultOptions($options))->getBody()->getContents()
+            $this->client->post($url, $this->defaultOptions($options))
         );
     }
 
     /**
-     * Returns the default request options with any given additional options.
+     * Get the default request options with any given additional options.
      *
      * @param array $additional
      *
@@ -168,14 +217,30 @@ class Api
     }
 
     /**
-     * Decodes the given response content into an associative array.
+     * Decode the given response content into an associative array.
      *
-     * @param string $content
+     * @param ResponseInterface $response
      *
-     * @return array
+     * @return mixed
      */
-    protected function decodeResponse($content)
+    protected function decodeResponse(ResponseInterface $response)
     {
-        return json_decode($content, $assoc = true);
+        if ($this->responseIsJson($response)) {
+            return json_decode($response->getBody()->getContents(), $assoc = true);
+        }
+
+        return $response->getBody();
+    }
+
+    /**
+     * Determine if the response is JSON.
+     *
+     * @param ResponseInterface $response
+     *
+     * @return bool
+     */
+    protected function responseIsJson(ResponseInterface $response)
+    {
+        return strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false;
     }
 }
