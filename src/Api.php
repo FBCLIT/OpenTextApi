@@ -221,7 +221,7 @@ class Api
      *
      * @param ResponseInterface $response
      *
-     * @return mixed
+     * @return array|ResponseInterface
      */
     protected function decodeResponse(ResponseInterface $response)
     {
@@ -229,7 +229,7 @@ class Api
             return json_decode($response->getBody()->getContents(), $assoc = true);
         }
 
-        return $response->getBody();
+        return $response;
     }
 
     /**
