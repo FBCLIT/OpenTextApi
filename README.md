@@ -46,7 +46,7 @@ try {
 ### Uploading a File
 
 OpenText does not support uploading files normally through POST requests. It
-only supports actual file uploads through asynchronous JavaScript requests.
+only supports streamed file uploads through asynchronous JavaScript requests.
 
 To perform a file upload, you **must** place the file on the web server
 server in your OpenText configured `Uploads` directory. This directory
