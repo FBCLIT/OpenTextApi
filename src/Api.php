@@ -89,12 +89,14 @@ class Api
      * Get the nodes children.
      *
      * @param string $id
+     * @param int    $limit
+     * @param int    $page
      *
      * @return array
      */
-    public function getNodeChildren($id)
+    public function getNodeChildren($id, $limit = 25, $page = 1)
     {
-        return $this->get("nodes/{$id}/nodes");
+        return $this->get("nodes/{$id}/nodes?limit=$limit&page=$page");
     }
 
     /**
@@ -185,7 +187,7 @@ class Api
     protected function get($url, array $options = [])
     {
         return $this->decodeResponse(
-            $this->client->get($url, $this->defaultOptions($options))
+            $this->client->get($url, $this->appendDefaultOptions($options))
         );
     }
 
@@ -200,7 +202,7 @@ class Api
     protected function post($url, array $options = [])
     {
         return $this->decodeResponse(
-            $this->client->post($url, $this->defaultOptions($options))
+            $this->client->post($url, $this->appendDefaultOptions($options))
         );
     }
 
@@ -211,7 +213,7 @@ class Api
      *
      * @return array
      */
-    protected function defaultOptions(array $additional = [])
+    protected function appendDefaultOptions(array $additional = [])
     {
         return ['headers' => ['OTCSTICKET' => $this->token]] + $additional;
     }
