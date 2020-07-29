@@ -45,6 +45,13 @@ class Client
     protected $ticket;
 
     /**
+     * The locally cached Api instance.
+     *
+     * @var Api|null
+     */
+    protected $api;
+
+    /**
      * Constructor.
      *
      * @param string $url     The OpenText API url.
@@ -69,6 +76,8 @@ class Client
      */
     public function connect($username, $password, $ntlm = true)
     {
+        $this->ticket = null;
+
         $config = array_merge($this->config, ['base_uri' => $this->getBaseUrl()]);
 
         if ($ntlm) {
@@ -106,7 +115,7 @@ class Client
             throw new Exception("OpenText client has not yet been connected to.");
         }
 
-        return new Api($this);
+        return $this->api ? $this->api : $this->api = new Api($this);
     }
 
     /**
