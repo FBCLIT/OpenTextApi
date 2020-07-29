@@ -1,5 +1,7 @@
 # OpenTextApi
 
+[![Build Status](https://travis-ci.com/FBCLIT/OpenTextApi.svg?branch=master)](https://travis-ci.com/FBCLIT/OpenTextApi)
+
 A PHP OpenText API client.
 
 ## Requirements
