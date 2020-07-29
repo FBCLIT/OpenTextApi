@@ -2,7 +2,6 @@
 
 namespace Fbcl\OpenTextApi;
 
-use GuzzleHttp\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class Api
@@ -16,37 +15,18 @@ class Api
     /**
      * The Guzzle HTTP client.
      *
-     * @var ClientInterface
+     * @var Client
      */
     protected $client;
 
     /**
-     * The OpenText API token to utilize.
-     *
-     * @var string
-     */
-    protected $token;
-
-    /**
      * Constructor.
      *
-     * @param ClientInterface $client
-     * @param string          $token
+     * @param Client $client
      */
-    public function __construct(ClientInterface $client, $token)
+    public function __construct(Client $client)
     {
         $this->client = $client;
-        $this->token = $token;
-    }
-
-    /**
-     * Get the API token (ticket).
-     *
-     * @return string
-     */
-    public function getToken()
-    {
-        return $this->token;
     }
 
     /**
@@ -187,7 +167,7 @@ class Api
     protected function get($url, array $options = [])
     {
         return $this->decodeResponse(
-            $this->client->get($url, $this->appendDefaultOptions($options))
+            $this->client->http()->get($url, $this->appendDefaultOptions($options))
         );
     }
 
@@ -202,7 +182,7 @@ class Api
     protected function post($url, array $options = [])
     {
         return $this->decodeResponse(
-            $this->client->post($url, $this->appendDefaultOptions($options))
+            $this->client->http()->post($url, $this->appendDefaultOptions($options))
         );
     }
 
@@ -215,7 +195,7 @@ class Api
      */
     protected function appendDefaultOptions(array $additional = [])
     {
-        return ['headers' => ['OTCSTICKET' => $this->token]] + $additional;
+        return ['headers' => ['OTCSTICKET' => $this->client->ticket()]] + $additional;
     }
 
     /**

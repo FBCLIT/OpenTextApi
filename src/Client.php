@@ -31,6 +31,20 @@ class Client
     protected $config = [];
 
     /**
+     * The Guzzle HTTP client.
+     *
+     * @var ClientInterface|null
+     */
+    protected $http;
+
+    /**
+     * The OpenText authorization ticket for sending API requests.
+     *
+     * @var string|null
+     */
+    protected $ticket;
+
+    /**
      * Constructor.
      *
      * @param string $url     The OpenText API url.
@@ -43,13 +57,13 @@ class Client
     }
 
     /**
-     * Connects to the OpenText API.
+     * Connects to the OpenText API and returns the authorization ticket.
      *
      * @param string $username The username to connect with OpenText
      * @param string $password The password to connect with OpenText
      * @param bool   $ntlm     Whether to use NTLM authentication
      *
-     * @return Api
+     * @return string
      *
      * @throws Exception
      */
@@ -61,16 +75,58 @@ class Client
             $config['auth'] = [$username, $password, 'ntlm'];
         }
 
-        $client = $this->getNewHttpClient($config);
+        $this->http = $this->getNewHttpClient($config);
 
         // Send the API authentication attempt.
-        $response = $client->post('auth', [
+        $response = $this->http->post('auth', [
             'form_params' => compact('username', 'password'),
         ]);
 
-        $ticket = $this->getTicketFromResponse($response);
+        return $this->ticket = $this->getTicketFromResponse($response);
+    }
 
-        return $this->getNewApiClient($client, $ticket);
+    /**
+     * Get the retrieved authorization ticket.
+     *
+     * @return string|null
+     */
+    public function ticket()
+    {
+        return $this->ticket;
+    }
+
+    /**
+     * Get a new OpenText API instance.
+     *
+     * @return Api
+     */
+    public function api()
+    {
+        if (! $this->connected()) {
+            throw new Exception("OpenText client has not yet been connected to.");
+        }
+
+        return new Api($this);
+    }
+
+    /**
+     * Get the underlying Guzzle HTTP client.
+     *
+     * @return ClientInterface|null
+     */
+    public function http()
+    {
+        return $this->http;
+    }
+
+    /**
+     * Determine if the client has an authorization ticket.
+     *
+     * @return bool
+     */
+    public function connected()
+    {
+        return ! is_null($this->ticket);
     }
 
     /**
@@ -117,19 +173,6 @@ class Client
     public function getVersion()
     {
         return $this->version;
-    }
-
-    /**
-     * Get a new API client.
-     *
-     * @param ClientInterface $client The Guzzle HTTP client.
-     * @param string          $ticket The OpenText API ticket.
-     *
-     * @return Api
-     */
-    protected function getNewApiClient(ClientInterface $client, $ticket)
-    {
-        return new Api($client, $ticket);
     }
 
     /**

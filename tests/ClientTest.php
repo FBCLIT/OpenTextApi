@@ -2,6 +2,7 @@
 
 namespace Fbcl\OpenTextApi\Tests;
 
+use Exception;
 use Mockery as m;
 use Fbcl\OpenTextApi\Api;
 use Fbcl\OpenTextApi\Client;
@@ -27,10 +28,22 @@ class ClientTest extends TestCase
     {
         $client = new ConnectClientStub('localhost');
 
-        $api = $client->connect('username', 'secret');
+        $this->assertNull($client->http());
+        $this->assertNull($client->ticket());
 
-        $this->assertInstanceOf(Api::class, $api);
-        $this->assertEquals('secret-ticket', $api->getToken());
+        $ticket = $client->connect('username', 'secret');
+
+        $this->assertTrue($client->connected());
+        $this->assertEquals('secret-ticket', $ticket);
+        $this->assertInstanceOf(Api::class, $client->api());
+        $this->assertEquals('secret-ticket', $client->ticket());
+    }
+
+    public function test_attempting_to_get_api_throws_exception_with_non_connected_client()
+    {
+        $this->expectException(Exception::class);
+
+        (new Client('localhost'))->api();
     }
 }
 
