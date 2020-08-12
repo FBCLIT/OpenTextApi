@@ -69,11 +69,16 @@ Usually this is set to the D:\Upload folder.
 ```php
 <?php
 
+require_once('vendor/autoload.php');
+
+use Fbcl\OpenTextApi\Api;
 use Fbcl\OpenTextApi\Client;
 
 $client = new Client('http://server.com/otcs/cs.exe', 'v1');
 
-$api = $client->connect('username', 'secret');
+$client->connect('username', 'secret');
+
+$api = new Api($client);
 
 try {
     // The folder node ID of where the file will be created under.
