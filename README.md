@@ -32,17 +32,14 @@ composer require fbclit/opentextapi
 
 require_once('vendor/autoload.php');
 
-use Fbcl\OpenTextApi\Api;
 use Fbcl\OpenTextApi\Client;
 
 $client = new Client('https://server.com/otcs/cs.exe', 'v1');
 
 try {
     $client->connect('username', 'secret', $ntlm = true);
-    
-    $api = new Api($client);
 
-    $api->getNode('123456');
+    $client->api()->getNode('123456');
 } catch (\Exception $ex) {
     // Could not connect / authenticate.
 }
@@ -71,14 +68,13 @@ Usually this is set to the D:\Upload folder.
 
 require_once('vendor/autoload.php');
 
-use Fbcl\OpenTextApi\Api;
 use Fbcl\OpenTextApi\Client;
 
 $client = new Client('http://server.com/otcs/cs.exe', 'v1');
 
 $client->connect('username', 'secret');
 
-$api = new Api($client);
+$api = $client->api();
 
 try {
     // The folder node ID of where the file will be created under.
