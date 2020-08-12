@@ -32,16 +32,19 @@ composer require fbclit/opentextapi
 
 require_once('vendor/autoload.php');
 
+use Fbcl\OpenTextApi\Api;
 use Fbcl\OpenTextApi\Client;
 
 $client = new Client('https://server.com/otcs/cs.exe', 'v1');
 
 try {
-    $api = $client->connect('username', 'secret', $ntlm = true);
+    $client->connect('username', 'secret', $ntlm = true);
+    
+    $api = new Api($client);
 
     $api->getNode('123456');
 } catch (\Exception $ex) {
-    //
+    // Could not connect / authenticate.
 }
 ```
 
